@@ -67,7 +67,8 @@ ui <- navbarPage(title = "Speed of Light",
                             "this application generates 4 graphics to show some functionalities 
                             of shiny applications."),
                           p("The dataset takes data from 5 experiments with 20 samples each
-                            (measurements) of the speed of light, as showed in the following table:"),
+                            (measurements) of the speed of light, which are coded in km/s with 299000 subtrated
+                            , as showed in the following table:"),
                           dataTableOutput("data")
                           )
 )
@@ -94,15 +95,18 @@ server <- function(input, output) {
     })
     output$histogram <-renderPlot({
         ggplot(data = df1$dat, aes(x=Speed))+
-            geom_histogram(bins=input$bin_qty)
+            geom_histogram(bins=input$bin_qty)+
+            ggtitle("Histogram of speed of light measurements")
     })
     output$density <-renderPlot({
         if(input$sel_col == "all"){
             ggplot(data = df1$dat, aes(x=Speed))+
-                geom_density(color="black")
+                geom_density(color="black")+
+                ggtitle("Prob Density (Overall)")
         } else {
             ggplot(data = df1$dat, aes(x=Speed))+
-                geom_density(aes(color = Expt))
+                geom_density(aes(color = Expt))+
+                ggtitle("Prob Density (by experiment)")
         }
     })
     output$data <- renderDataTable(df, 

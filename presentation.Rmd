@@ -1,0 +1,76 @@
+---
+title: "Speed of light app"
+author: "Jhonatan Zambrano"
+date: "3/12/2021"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## The Dataset
+
+The dataset used for develop the app contains 100 measurements of the speed of 
+light from five experiments, each of this consisting of 20 consecutive "runs".
+
+The speed of light is coded in km/sec with 299000 subtracted.
+
+```{r data, message=F, comment=""}
+library(datasets)
+df<-morley
+df$Expt<-as.factor(df$Expt)
+head(df, 5)
+summary(df)
+```
+
+
+
+## The data selection
+
+The user is able to exclude the more extreme values using two limits values: 
+the inferior quantile and the superior quantile, this is achieved obtaining from 
+the user the desired quantile and calculating the corresponding speed value. 
+It's shown in the graph as blue lines:
+
+```{r graph1, fig.align='center'}
+library(ggplot2)
+ggplot(data = df, aes(x=as.numeric(rownames(df)), y=Speed))+
+  geom_point(aes(color=Expt))+
+  geom_abline(slope=0, intercept = mean(df$Speed), color ="red")+
+  geom_abline(slope=0, intercept = quantile(df$Speed, 0.05), color ="blue")+
+  geom_abline(slope=0, intercept = quantile(df$Speed, 0.95), color ="blue")+
+  ggtitle("Plot of all data")+
+  xlab("overall sample number")+
+  labs(caption = "here we use 0.05 and 0.95 quantiles")
+```
+
+## Plots
+
+After selecting the data, the user can generate the following additional plots:
+
+- Boxplot: a boxplot segregated by experiments
+- Histogram: a histogram which can be modified by changing their bins
+- Density: a probability density plot using a gaussian kernel, the user can select to see the overall behavior or by experiment.
+
+## Boxplot
+
+```{r graph2, fig.align='center'}
+ggplot(data = df, aes(y=Speed))+
+  geom_boxplot(aes(color = Expt))+
+  ggtitle("Speed of Light, by experiments")
+```
+
+## Histogram
+
+```{r graph3, fig.align='center'}
+ggplot(data = df, aes(x=Speed))+
+  geom_histogram(bins=6)
+```
+
+## Density
+
+```{r graph4, fig.align='center'}
+ggplot(data = df, aes(x=Speed))+
+  geom_density(aes(color = Expt))
+```
